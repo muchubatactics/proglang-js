@@ -112,3 +112,54 @@ function evaluate(expr, scope)
         }
     }
 }
+
+//special forms, i.e. the language's special syntax and keywords
+
+specialForms.if = (args, scope) => {
+    if (args.length != 3)
+    {
+        throw new SyntaxError("Wrong number of arguments to if.");
+    }
+    else if (args[0] !== false)
+    {
+        return evaluate(args[1], scope);
+    }
+    else
+    {
+        return evaluate(args[2], scope);
+    }
+};
+
+specialForms.while = (args, scope) => {
+    if (args.length != 2)
+    {
+        throw new SyntaxError("Wrong number of arguments for while.");
+    }
+
+    while (evaluate(args[0], scope) !== false)
+    {
+        evaluate(args[1], scope);
+    }
+
+    return false; //for a lack of a meaningful return value
+};
+
+specialForms.do = (args, scope) => {
+    let value= false;
+    for (let arg of args)
+    {
+        value = evaluate(arg, scope);
+    }
+    return value;
+};
+
+specialForms.define = (args, scope) => {
+    if (args.length != 2 || args[0].type != "word")
+    {
+        throw new SyntaxError("Incorrect usage of define.");
+    }
+
+    let value = evaluate(args[1], scope);
+    scope[args[0].name] = value;
+    return value;
+};
