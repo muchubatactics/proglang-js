@@ -4,7 +4,13 @@ function skipSpace(string)
 {
     let index = string.search(/\S/);
     if (index == -1) return "";
-    return string.slice(index);
+    string = string.slice(index);
+    if (string[0] == '#')
+    {
+        let i = string.indexOf('\n');
+        return skipSpace(string.slice((i + 1)));
+    }
+    return string;
 }
 
 function parseExpression(program)
@@ -247,14 +253,15 @@ function run(program)
 // // `);
 
 run(`
-    do(
+    do( #heheh
         define(arr, array(1,2,3,4,5)),
+        #ehhehe
         define(count, -(length(arr), 1)),
         while(>(count, 0),
             do(
                 print(element(arr, count)),
                 define(count, -(count, 1))
-            )
+            )#hehe
         )
 
     )
