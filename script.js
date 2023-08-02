@@ -101,6 +101,11 @@ function evaluate(expr, scope)
         else
         {
             let op = evaluate(operator, scope);
+            // console.log(`******** ${op.type} *************`)
+            // return op(...args.map((arg) => evaluate(arg, scope)));
+
+            //debugging this
+
             if (op.type == "function")
             {
                 return op(...args.map((arg) => evaluate(arg, scope)));
@@ -163,3 +168,40 @@ specialForms.define = (args, scope) => {
     scope[args[0].name] = value;
     return value;
 };
+
+//environment
+const topScope = Object.create(null);
+
+topScope.true = true;
+topScope.false = false;
+
+for (let operator of ["+", "-", "*", "/", ">", "<", "=="])
+{
+    topScope[operator] = Function("a, b", `return a ${operator} b;`);
+    topScope[operator].type = "function";
+}
+
+
+topScope.print = (value) => {
+    console.log(value);
+    return value;
+};
+topScope.print.type = "function";
+
+function run(program)
+{
+    return evaluate(parse(program), Object.create(topScope));
+}
+
+
+//sample runs
+console.log(topScope["+"].type);
+run(`print(+(5,6))`);
+run(`
+do(define(total, 0),
+define(count, 1),
+while(<(count, 11),
+do(define(total, +(total, count)),
+define(count, +(count, 1)))),
+print(total))
+`);
