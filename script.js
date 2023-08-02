@@ -171,6 +171,15 @@ specialForms.define = (args, scope) => {
     return value;
 };
 
+specialForms.set = (args, scope) => {
+    if (args.length != 2 || args[0].type != "word")
+    {
+        throw new SyntaxError("Incorrect usage of set.");
+    }
+    let value = evaluate(args[1], scope);
+    //to be continued
+};
+
 specialForms.fun = (args, scope) => {
     if (!args.length)
     {
