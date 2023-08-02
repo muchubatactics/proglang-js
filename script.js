@@ -211,6 +211,24 @@ topScope.print = (value) => {
     return value;
 };
 
+topScope.array = (...values) => {
+    let arr = [];
+    for (let a of values) arr.push(a);
+    return arr;
+};
+
+topScope.length = (array) => {
+    return array.length;
+};
+
+topScope.element = (array, n) => {
+    if (n >= topScope.length(array))
+    {
+        throw new ReferenceError("Trying to access an out of bounds value in an array.");
+    }
+    return array[n];
+};
+
 function run(program)
 {
     return evaluate(parse(program), Object.create(topScope));
@@ -229,14 +247,15 @@ function run(program)
 // // `);
 
 run(`
-do(define(plusOne, fun(a, +(a, 1))),
-print(plusOne(10)))
-`);
+    do(
+        define(arr, array(1,2,3,4,5)),
+        define(count, -(length(arr), 1)),
+        while(>(count, 0),
+            do(
+                print(element(arr, count)),
+                define(count, -(count, 1))
+            )
+        )
 
-run(`
-do(define(pow, fun(base, exp,
-if(==(exp, 0),
-1,
-*(base, pow(base, -(exp, 1)))))),
-print(pow(2, 10)))
+    )
 `);
